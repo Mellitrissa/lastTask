@@ -1,6 +1,5 @@
 package com.example.demo.controller;
-import com.example.demo.model.User;
-import com.example.demo.model.dto.UserDTO;
+import com.example.demo.dto.UserForm;
 import com.example.demo.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,25 +16,31 @@ public class UserController {
 
     @GetMapping("/users")
     public String getUsersPage(Model model) {
-        model.addAttribute("users", userService.findAll());
+        model.addAttribute("users", userService.getAllUsers());
         return "users";
     }
 
     @PostMapping("/users")
-    public String addUser(User user) {
-        userService.saveUser(user);
+    public String addUser(UserForm user) {
+        userService.addUser(user);
         return "redirect:/users";
     }
 
     @GetMapping("/users/{id}")
     public String getUserPage(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", userService.findUserById(id));
+        model.addAttribute("user", userService.getUserById(id));
         return "/user";
+    }
+
+    @PostMapping("/user/{id}/update")
+    public String updateUser(@PathVariable("id") Long userId,UserForm user) {
+        userService.updateUser(userId,user);
+        return "redirect:/users/" + userId;
     }
 
     @GetMapping("/users/{id}/delete")
     public String updateUser(@PathVariable("id") Long userId) {
-        userService.deleteUserById(userId);
+        userService.deleteUser(userId);
         return "redirect:/users";
     }
 

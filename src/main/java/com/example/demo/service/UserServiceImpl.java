@@ -1,68 +1,54 @@
 package com.example.demo.service;
+import com.example.demo.dto.UserForm;
 import com.example.demo.model.User;
-import com.example.demo.repositories.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.demo.repositories.UsersRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-
 @Service
 
 public class UserServiceImpl implements UserService {
 
-    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
-
 @Autowired
-    private  final UserRepository userRepository;
-    public UserServiceImpl(UserRepository userRepository){
-       this.userRepository=userRepository;
-        logger.info("UserServiceImpl constructor" + userRepository);
+    private  final  UsersRepositories usersRepository;
+    public UserServiceImpl(UsersRepositories usersRepository){
+        this.usersRepository = usersRepository;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<User> findAll(){
-        return userRepository.findAll();
+    public List<User> getAllUsers(){
+        return usersRepository.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Optional <User> findUserById(Long id) {
-        return  findUserById(id);
+    public void updateUser(Long userId, UserForm user) {
+        User userForUpdate = usersRepository.findById(userId).orElseThrow();
+        userForUpdate.setFirstName(user.getFirstName());
+        userForUpdate.setLastName(user.getLastName());
+        userForUpdate.setEmail(user.getEmail());
+
+        usersRepository.save(userForUpdate);
     }
 
     @Override
-    @Transactional
-    public Optional<User> saveUser(User user){
-        if (user==null){
-            throw new RuntimeException("User is null");
-        }
-        return Optional.of(userRepository.save(user));
+    public User getUserById(Long id) {
+        return  usersRepository.findAllById(id);
     }
 
     @Override
-    @Transactional
-    public void deleteUserById(Long id) {
-        userRepository.deleteById(id);
-    }
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<User> findUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public void addUser(UserForm user) {
+        User newUser = User.builder()
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .build();
+        usersRepository.save(newUser);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.info("Looking for user by username: " + username + " in UserServiceImpl");
-        User user = userRepository.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("User doesn't exists"));
-        logger.info("User found in UserServiceImpl. User: " + user);
-        return user;
+    public void deleteUser(Long id) {
+        usersRepository.deleteUserById(id);
+
     }
 }

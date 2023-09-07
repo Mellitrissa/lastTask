@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Машины</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+</head>
+<body>
+<h1>Машины</h1>
+<table>
+    <thead>
+    <tr>
+        <th> Model </th>
+        <th> Series </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="car : ${cars}">
+        <td><span th:text="${car.model}"> Model </span></td>
+        <td><span th:text="${car.series}"> Series </span></td>
+
+        <td><a th:href="@{/cars/{id}/delete(id=${car.getId()})}">Удалить</a></td>
+        <td><a th:href="@{/cars/{id}(id=${car.getId()})}">Перейти</a></td>
+    </tr>
+    </tbody>
+</table>
+<form action="/cars" method="post">
+    <br>
+    <label>
+        Модель
+        <input type="text" name="model" placeholder="Введите модель">
+    </label>
+    <br>
+    <label>
+        Серия
+        <input type="text" name="series" placeholder="Введите серию">
+    </label>
+    <br>
+    <label>
+        <input autofocus type="submit" value="Добавить"/>
+    </label>
+</form>
+</body>
+</html>
