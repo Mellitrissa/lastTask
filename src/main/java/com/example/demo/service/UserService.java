@@ -1,21 +1,18 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.UserForm;
-import com.example.demo.model.User;
 
+import com.example.demo.model.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
-    List<User> getAllUsers();
+    List<User> findAll ();
+    Optional<User> saveUser(User user);
+    void deleteUserById(Long id);
+    Optional<User> findUserByUsername (String username);
 
-
-    void updateUser(Long userId, UserForm user);
-
-    User getUserById(Long id);
-
-    void addUser(UserForm user);
-
-    void deleteUser(Long id);
+    Optional <User> findUserById(Long id);
 }
